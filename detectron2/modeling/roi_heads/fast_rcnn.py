@@ -341,7 +341,8 @@ class FastRCNNOutputLayers(nn.Module):
         if self.use_sigmoid_ce:
             loss_cls = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         else:
-            loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
+            # loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
+            loss_cls = self.dummy_loss(scores, gt_classes)
 
         losses = {
             "loss_cls": loss_cls,
@@ -567,3 +568,25 @@ class FastRCNNOutputLayers(nn.Module):
         else:
             probs = F.softmax(scores, dim=-1)
         return probs.split(num_inst_per_image, dim=0)
+
+    def dummy_loss(self, pred_class_logits, gt_classes):
+            if pred_class_logits.numel() == 0:
+                return pred_class_logits.new_zeros([1])[0]
+                
+            N = pred_class_logits.shape[0]
+            K = pred_class_logits.shape[1] - 1
+        
+        # 特定のクラススコアの強調（例としてクラス0を使用）
+        target_class = 0
+        target = pred_class_logits.new_zeros(N, K + 1)
+        target[:, target_class] = 1
+        
+        # ロス計算
+        cls_loss = F.binary_cross_entropy_with_logits(
+            pred_class_logits[:, :-1], target[:, :-1], reduction="none"
+        )
+        
+        dummy_weight = 10
+        loss = torch.sum(cls_loss) * dummy_weight / N
+
+        return loss
