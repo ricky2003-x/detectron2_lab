@@ -570,11 +570,11 @@ class FastRCNNOutputLayers(nn.Module):
         return probs.split(num_inst_per_image, dim=0)
 
     def dummy_loss(self, pred_class_logits, gt_classes):
-            if pred_class_logits.numel() == 0:
-                return pred_class_logits.new_zeros([1])[0]
-                
-            N = pred_class_logits.shape[0]
-            K = pred_class_logits.shape[1] - 1
+        if pred_class_logits.numel() == 0:
+            return pred_class_logits.new_zeros([1])[0]
+             
+        N = pred_class_logits.shape[0]
+        K = pred_class_logits.shape[1] - 1
         
         # 特定のクラススコアの強調（例としてクラス0を使用）
         target_class = 0
