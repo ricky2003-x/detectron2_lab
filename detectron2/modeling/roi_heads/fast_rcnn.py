@@ -341,6 +341,7 @@ class FastRCNNOutputLayers(nn.Module):
         if self.use_sigmoid_ce:
             loss_cls = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         else:
+            # 自作のdummy_lossを利用
             # loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
             loss_cls = self.dummy_loss(scores, gt_classes)
 
@@ -569,6 +570,7 @@ class FastRCNNOutputLayers(nn.Module):
             probs = F.softmax(scores, dim=-1)
         return probs.split(num_inst_per_image, dim=0)
 
+    # dummy_lossは自作
     def dummy_loss(self, pred_class_logits, gt_classes):
         if pred_class_logits.numel() == 0:
             return pred_class_logits.new_zeros([1])[0]
