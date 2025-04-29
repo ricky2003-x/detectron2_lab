@@ -343,8 +343,11 @@ class FastRCNNOutputLayers(nn.Module):
             loss_cls = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         else:
             # 自作のdummy_lossを利用
-            # loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
-            loss_cls = self.dummy_loss(scores, gt_classes)
+            loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
+            print('--------------------------------')
+            print(type(loss_cls))
+            print(len(loss_cls))
+            # loss_cls = self.dummy_loss(scores, gt_classes)
 
         losses = {
             "loss_cls": loss_cls,
