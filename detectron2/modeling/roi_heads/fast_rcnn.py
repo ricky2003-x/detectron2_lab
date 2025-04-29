@@ -4,6 +4,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 import torch
 from torch import nn
 from torch.nn import functional as F
+import random
 
 from detectron2.config import configurable
 from detectron2.data.detection_utils import get_fed_loss_cls_weights
@@ -572,5 +573,5 @@ class FastRCNNOutputLayers(nn.Module):
 
     # dummy_lossは自作
     def dummy_loss(self, pred_class_logits, gt_classes):
-        loss = rand()
+        loss = random.random()
         return loss
