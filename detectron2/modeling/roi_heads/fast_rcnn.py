@@ -572,5 +572,5 @@ class FastRCNNOutputLayers(nn.Module):
 
     # dummy_lossは自作
     def dummy_loss(self, pred_class_logits, gt_classes):
-        loss = rand() * 10000
+        loss = rand()
         return loss
