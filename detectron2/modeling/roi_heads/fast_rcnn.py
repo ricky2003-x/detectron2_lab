@@ -345,8 +345,7 @@ class FastRCNNOutputLayers(nn.Module):
             # 自作のdummy_lossを利用
             loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
             print('--------------------------------')
-            print(type(loss_cls))
-            print(len(loss_cls))
+            print(loss_cls.shape())
             # loss_cls = self.dummy_loss(scores, gt_classes)
 
         losses = {
