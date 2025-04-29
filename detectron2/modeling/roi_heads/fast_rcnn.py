@@ -572,5 +572,5 @@ class FastRCNNOutputLayers(nn.Module):
         return probs.split(num_inst_per_image, dim=0)
 
     # dummy_lossは自作
-    def dummy_loss(self, pred_class_logits, gt_classes):
+    def dummy_loss(self, scores, gt_classes):
         return torch.rand(1, device=scores.device)
