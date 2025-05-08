@@ -316,6 +316,7 @@ class FastRCNNOutputLayers(nn.Module):
         Returns:
             Dict[str, Tensor]: dict of losses
         """
+        
         scores, proposal_deltas = predictions
 
         # parse classification outputs
@@ -342,9 +343,35 @@ class FastRCNNOutputLayers(nn.Module):
         if self.use_sigmoid_ce:
             loss_cls = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         else:
-            # 自作のdummy_lossを利用
+            # 書き換えここから
+            # 元ソース
             # loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
-            loss_cls = self.dummy_loss(scores, gt_classes)
+            # dummy用
+            # loss_cls = self.dummy_loss(scores, gt_classes)
+            # CMLoss
+            from .cmloss import ConfusionMatrixBasedLoss
+            cm_loss_fn = ConfusionMatrixBasedLoss()
+            num_classes = scores.shape[1]
+            losses_cm = []
+         if scores.numel() == 0:
+             loss_cls = scores.sum() * 0
+        else:
+             for k in range(num_classes):
+                 binary_gt = (gt_classes == k).float()
+                 pred_logits = scores[:, k]
+                 pred_probs = torch.sigmoid(pred_logits)
+ 
+                 if binary_gt.sum() == 0:
+                     continue
+ 
+                 loss_k = cm_loss_fn(pred_probs, binary_gt)
+                 losses_cm.append(loss_k)
+ 
+             if losses_cm:
+                 loss_cls = torch.stack(losses_cm).mean()
+             else:
+                 loss_cls = scores.sum() * 0
+            
 
         losses = {
             "loss_cls": loss_cls,
