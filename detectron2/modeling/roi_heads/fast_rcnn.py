@@ -353,6 +353,7 @@ class FastRCNNOutputLayers(nn.Module):
             cm_loss = ConfusionMatrixBasedLoss()
             num_classes = scores.shape[1]
             losses_cm = []
+
             if scores.numel() == 0:
                 loss_cls = scores.sum() * 0
             else:
@@ -360,15 +361,16 @@ class FastRCNNOutputLayers(nn.Module):
                     binary_gt = (gt_classes == k).float()
                     pred_logits = scores[:, k]
                     pred_probs = torch.sigmoid(pred_logits)
- 
+
                     if binary_gt.sum() == 0:
                         continue
- 
+
                     loss_k = cm_loss(pred_probs, binary_gt)
                     losses_cm.append(loss_k)
-                 if losses_cm:
+
+                if losses_cm:
                     loss_cls = torch.stack(losses_cm).mean()
-                 else:
+                else:
                     loss_cls = scores.sum() * 0
 
         losses = {
