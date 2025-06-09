@@ -366,10 +366,9 @@ class FastRCNNOutputLayers(nn.Module):
  
                     loss_k = cm_loss(pred_probs, binary_gt)
                     losses_cm.append(loss_k)
- 
-             　 if losses_cm:
+                 if losses_cm:
                     loss_cls = torch.stack(losses_cm).mean()
-                else:
+                 else:
                     loss_cls = scores.sum() * 0
 
         losses = {
