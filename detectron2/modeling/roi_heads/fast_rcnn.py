@@ -350,7 +350,7 @@ class FastRCNNOutputLayers(nn.Module):
             # loss_cls = self.dummy_loss(scores, gt_classes)
             # CMLoss
             from .cmloss import ConfusionMatrixBasedLoss
-            cm_loss_fn = ConfusionMatrixBasedLoss()
+            cm_loss = ConfusionMatrixBasedLoss()
             num_classes = scores.shape[1]
             losses_cm = []
             if scores.numel() == 0:
@@ -364,7 +364,7 @@ class FastRCNNOutputLayers(nn.Module):
                     if binary_gt.sum() == 0:
                         continue
  
-                    loss_k = cm_loss_fn(pred_probs, binary_gt)
+                    loss_k = cm_loss(pred_probs, binary_gt)
                     losses_cm.append(loss_k)
  
              　 if losses_cm:
